@@ -38,6 +38,8 @@ func TestParseLine(t *testing.T) {
 			t.Error(err.Error())
 		}
 
-		t.Log(line == lineSolutions[i])
+		if line != lineSolutions[i] {
+			t.Error("Line mismatch")
+		}
 	}
 }
