@@ -20,6 +20,39 @@ func TestCodec(t *testing.T) {
 	}
 }
 
+func TestBuildOverLapsMap(t *testing.T) {
+	ch, err := LineReader("test.txt")
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+
+	overlapsMap := BuildOverLapsMap(ch)
+
+	for encoded, lines := range overlapsMap {
+		x, y := DecodePosition(encoded)
+		t.Logf("%dx%d --> %v\n", x, y, lines)
+	}
+}
+
+func TestGetNonoverlappers(t *testing.T) {
+	ch, err := LineReader("test.txt")
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+
+	nonoverlappers := GetNonoverlappers(ch)
+
+	if len(nonoverlappers) != 1 {
+		t.Errorf("Expected 1; got %d\n", len(nonoverlappers))
+	}
+
+	if nonoverlappers[0] != 3 {
+		t.Errorf("Not 3")
+	}
+}
+
 func TestParseLine(t *testing.T) {
 	lineStrings := []string{
 		"#1 @ 1,3: 4x4",

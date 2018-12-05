@@ -68,13 +68,13 @@ func ParseLine(str string) (Line, error) {
 	return line, nil
 }
 
-func BuildOverLapsMap(ch chan Line) map[uint64][]*Line {
-	overlaps := make(map[uint64][]*Line)
+func BuildOverLapsMap(ch chan Line) map[uint64][]int {
+	overlaps := make(map[uint64][]int)
 
 	for line := range ch {
 		for x := line.LeftEdge; x < line.LeftEdge+line.Width; x++ {
 			for y := line.TopEdge; y < line.TopEdge+line.Height; y++ {
-				overlaps[EncodePosition(x, y)] = append(overlaps[EncodePosition(x, y)], &line)
+				overlaps[EncodePosition(x, y)] = append(overlaps[EncodePosition(x, y)], line.Id)
 			}
 		}
 	}
@@ -95,14 +95,41 @@ func CountOverlaps(ch chan Line) int {
 	return overLapCount
 }
 
+func GetNonoverlappers(ch chan Line) []int {
+	overlaps := BuildOverLapsMap(ch)
+	overlappers := make(map[int]bool)
+
+	for _, v := range overlaps {
+		for _, id := range v {
+			if _, exists := overlappers[id]; !exists {
+				overlappers[id] = len(v) > 1
+			} else if len(v) > 1 {
+				overlappers[id] = true
+			}
+		}
+	}
+
+	nonoverlappers := make([]int, 0)
+
+	for id, v := range overlappers {
+		if !v {
+			nonoverlappers = append(nonoverlappers, id)
+		}
+	}
+
+	return nonoverlappers
+}
+
 func main() {
+	// overLapCount := CountOverlaps(ch)
+	// fmt.Println(overLapCount)
+
 	ch, err := LineReader("input.txt")
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
-
-	overLapCount := CountOverlaps(ch)
-
-	fmt.Println(overLapCount)
+	for _, id := range GetNonoverlappers(ch) {
+		fmt.Println(id)
+	}
 }
