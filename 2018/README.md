@@ -1,0 +1,1 @@
+If you're wondering what I'm thinking with some of these solutions... I decided to force myself to use concurrent methods as much as reasonable. If my code seems way more complicated than it needs to be, it probably is. 
