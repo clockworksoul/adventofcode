@@ -74,7 +74,8 @@ func CalculateGuardMinutesAsleep(records []*Record) map[int]int {
 	return sleepMap
 }
 
-// FindGuardMostAsleepMinute returns (minute, count)
+// FindGuardMostAsleepMinute finds the minute at which a guard is most frequently asleep.
+// Returns (minute, count)
 // Assumptions:
 // 1. Records list is sorted
 func FindGuardMostAsleepMinute(records []*Record, guardId int) (int, int) {
@@ -110,6 +111,33 @@ func FindGuardMostAsleepMinute(records []*Record, guardId int) (int, int) {
 	}
 
 	return maxMinute, maxCount
+}
+
+// Returns (guardId, minute)
+// This is brute force. I don't care.
+func FindGuardMostFrequentlyAsleepOnSameMinute(records []*Record) (int, int) {
+	// Find all guard Ids
+	allGuardIds := make(map[int]bool) // Ghetto set
+
+	for _, record := range records {
+		if record.recordType == RecordTypeBeginsShift {
+			allGuardIds[record.guardId] = true
+		}
+	}
+
+	maxId, maxMinute, maxCount := 0, 0, 0
+
+	for id, _ := range allGuardIds {
+		minute, count := FindGuardMostAsleepMinute(records, id)
+
+		if count > maxCount {
+			maxCount = count
+			maxId = id
+			maxMinute = minute
+		}
+	}
+
+	return maxId, maxMinute
 }
 
 // GetMostSleepingGuard returns (guardId, minutes)
@@ -226,11 +254,14 @@ func main() {
 
 	sleepMap := CalculateGuardMinutesAsleep(records)
 	guardId, _ := GetMostSleepingGuard(sleepMap)
-
 	minute, count := FindGuardMostAsleepMinute(records, guardId)
 
 	fmt.Printf("Guard %d slept the most on minute %d (%d days) [Answer=%d]\n",
 		guardId, minute, count, guardId*minute,
 	)
 
+	guardId, minute = FindGuardMostFrequentlyAsleepOnSameMinute(records)
+	fmt.Printf("Guard %d is most frequently asleep on the same minute (%d) [Answer=%d]\n",
+		guardId, minute, guardId*minute,
+	)
 }
