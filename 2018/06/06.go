@@ -201,62 +201,53 @@ func MaxClosestAreas(points []*Point) (Point, int) {
 	return maxp, maxa
 }
 
-// For debugging purposes
-func GeneratePlot(points []*Point) {
+func FindSafe(points []*Point) int {
 	minX, minY := 999999.0, 999999.0
-	maxX, maxY := -100.0, -100.0
+	maxX, maxY := -999999.0, -999999.0
 
-	type LabeledPoint struct {
-		Point
-		Label string
-	}
-
-	newpoints := make([]*LabeledPoint, len(points))
-
-	for i, p := range points {
-		newpoints[i] = &LabeledPoint{*p, fmt.Sprintf("%X", i+1)}
-	}
-
-	for _, p := range newpoints {
+	for _, p := range points {
 		if p.X > maxX {
 			maxX = p.X
-		} else if p.X < minX {
+		}
+		if p.X < minX {
 			minX = p.X
 		}
-
 		if p.Y > maxY {
 			maxY = p.Y
-		} else if p.Y < minY {
+		}
+		if p.Y < minY {
 			minY = p.Y
 		}
 	}
 
-	minX -= 1
-	minY -= 1
-	maxX += 1
-	// maxY += 1
+	minX -= 1000
+	maxX += 1000
+	minY -= 1000
+	maxY += 1000
 
-	for y := 0.0; y <= maxY; y++ {
-		s := ""
+	count := 0
 
-		for x := 0.0; x <= maxX; x++ {
-			qp := &LabeledPoint{Point{X: x, Y: y}, "foo"}
+	for y := minY; y < maxY; y++ {
 
-			sort.Slice(newpoints, func(i, j int) bool {
-				disti := qp.DistanceTo(&newpoints[i].Point)
-				distj := qp.DistanceTo(&newpoints[j].Point)
-				return disti < distj
-			})
+	xLoop:
+		for x := minX; x < maxX; x++ {
+			qp := &Point{x, y}
+			sum := 0
 
-			if qp.DistanceTo(&newpoints[0].Point) == qp.DistanceTo(&newpoints[1].Point) {
-				s += fmt.Sprintf("%3s", ".")
-			} else {
-				s += fmt.Sprintf("%3s", newpoints[0].Label)
+			for _, p := range points {
+				sum += int(qp.DistanceTo(p))
+
+				if sum >= 10000 {
+					continue xLoop
+				}
 			}
-		}
 
-		fmt.Printf("%s\n", s)
+			// fmt.Printf("%s --> %d\n", qp, sum)
+			count++
+		}
 	}
+
+	return count
 }
 
 func main() {
@@ -268,6 +259,8 @@ func main() {
 
 	// GeneratePlot(points)
 
-	maxp, maxa := MaxClosestAreas(points)
-	fmt.Printf("Biggest %s with area of %d\n", &maxp, maxa)
+	// maxp, maxa := MaxClosestAreas(points)
+	// fmt.Printf("Biggest %s with area of %d\n", &maxp, maxa)
+
+	fmt.Println(FindSafe(points))
 }
