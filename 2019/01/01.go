@@ -9,7 +9,7 @@ import (
 func main() {
 	fuelSum, fuelForFuelSum, err := calcFuelSum()
 	if err != nil {
-		panic(nil)
+		panic(err)
 	}
 
 	fmt.Printf("Fuel needed (1): %d\n", fuelSum)
