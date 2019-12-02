@@ -38,8 +38,8 @@ func ingestInputs() (<-chan int, error) {
 		return nil, fmt.Errorf("cannot open transaction log file: %w", err)
 	}
 
-	ch := make(chan int)
 	scanner := bufio.NewScanner(file)
+	ch := make(chan int)
 
 	go func() {
 		defer close(ch)
@@ -48,8 +48,7 @@ func ingestInputs() (<-chan int, error) {
 		var i int
 
 		for scanner.Scan() {
-			line := scanner.Text()
-			fmt.Sscanf(line, "%d", &i)
+			fmt.Sscanf(scanner.Text(), "%d", &i)
 			ch <- i
 		}
 	}()
@@ -58,7 +57,6 @@ func ingestInputs() (<-chan int, error) {
 }
 
 func calculateFuel(mass int) int {
-	// fmt.Println(mass)
 	return (mass / 3) - 2
 }
 
