@@ -35,7 +35,7 @@ func calcFuelSum() (int, int, error) {
 func ingestInputs() (<-chan int, error) {
 	file, err := os.OpenFile("input.txt", os.O_RDWR, 0755)
 	if err != nil {
-		return nil, fmt.Errorf("cannot open transaction log file: %w", err)
+		return nil, fmt.Errorf("cannot open input file: %w", err)
 	}
 
 	scanner := bufio.NewScanner(file)
