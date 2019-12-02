@@ -44,6 +44,10 @@ func TestAdd(t *testing.T) {
 		t.Errorf("add failed: expected 70, got %d\n", i[3])
 	}
 
+	if cpu.Value() != 70 {
+		t.Errorf("bad value: expected=70, got=%d\n", cpu.Value())
+	}
+
 	t.Log("OUT:", cpu.intcode)
 }
 
@@ -68,6 +72,10 @@ func TestHalt(t *testing.T) {
 	if b {
 		t.Errorf("DoNext returned true")
 	}
+
+	if cpu.Value() != 0 {
+		t.Errorf("bad value: expected=0, got=%d\n", cpu.Value())
+	}
 }
 
 func TestMul(t *testing.T) {
@@ -88,6 +96,10 @@ func TestMul(t *testing.T) {
 	}
 	if i[0] != 3500 {
 		t.Errorf("add failed: expected 3500, got %d\n", i[0])
+	}
+
+	if cpu.Value() != 3500 {
+		t.Errorf("bad value: expected=3500, got=%d\n", cpu.Value())
 	}
 
 	t.Log("OUT:", cpu.intcode)

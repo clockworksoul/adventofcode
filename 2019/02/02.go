@@ -15,12 +15,17 @@ const (
 )
 
 func main() {
+	day1()
+	day2()
+}
+
+func day1() {
 	ints, err := ingestInputs()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// before running the program, replace position 1 with the value 12 and
+	// Before running the program, replace position 1 with the value 12 and
 	// replace position 2 with the value 2. 
 	ints[1] = 12
 	ints[2] = 2
@@ -32,7 +37,35 @@ func main() {
 	}
 
 	// What value is left at position 0 after the program halts?
-	log.Println("Value at position 0:", cpu.intcode[0])
+	log.Println("(1) Value at position 0:", cpu.intcode[0])
+}
+
+func day2() {
+	const seeking = 19690720
+
+	for noun := 0; noun <= 99; noun++ {
+		for verb := 0; verb <= 99; verb++ {
+			ints, err := ingestInputs()
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			ints[1] = noun
+			ints[2] = verb
+
+			cpu := CPU{intcode:ints}
+
+			for cpu.DoNext() {}
+
+			if cpu.intcode[0] == seeking {
+				log.Printf("(2) Found %d! noun=%d; verb=%d\n", seeking, noun, verb)
+				log.Printf("(2) 100 * noun + verb = %d\n", (100 * noun) + verb)
+				return
+			}
+		}
+	}
+
+	log.Println("(2) No match found.")
 }
 
 func ingestInputs() ([]int, error) {
@@ -61,25 +94,42 @@ type CPU struct {
 	intcode []int
 	ip      int
 	halted  bool
+	value   int
+}
+
+type Instruction struct {
+	opcode int
+	noun   int
+	verb   int
+
 }
 
 func (cpu *CPU) DoNext() bool {
+	var val int
+
 	if cpu.halted || cpu.ip >= len(cpu.intcode) {
 		return false
 	}
 
 	switch cpu.intcode[cpu.ip] {
 	case CodeAdd:
-		cpu.executeAdd()
+		val = cpu.executeAdd()
+		cpu.ip += 4
 	case CodeMul:
-		cpu.executeMul()
+		val = cpu.executeMul()
+		cpu.ip += 4
 	case CodeHalt:
 		cpu.halted = true
+		cpu.ip += 1
 	}
 
-	cpu.ip += 4
+	cpu.value = val
 
 	return true
+}
+
+func (cpu *CPU) Value() int {
+	return cpu.value
 }
 
 func (cpu *CPU) Peek() []int {
@@ -92,16 +142,21 @@ func (cpu *CPU) Peek() []int {
 	return ints
 }
 
-func (cpu *CPU) executeAdd() {
+func (cpu *CPU) executeAdd() int {
 	peek := cpu.Peek()
-	pa, pb, pc := peek[1], peek[2], peek[3]
-	a, b := cpu.intcode[pa], cpu.intcode[pb]
-	cpu.intcode[pc] = a + b
+	pnoun, pverb, paddress := peek[1], peek[2], peek[3]
+	noun, verb := cpu.intcode[pnoun], cpu.intcode[pverb]
+	cpu.intcode[paddress] = noun + verb
+
+	return cpu.intcode[paddress]
 }
 
-func (cpu *CPU) executeMul() {
+func (cpu *CPU) executeMul() int {
 	peek := cpu.Peek()
-	pa, pb, pc := peek[1], peek[2], peek[3]
-	a, b := cpu.intcode[pa], cpu.intcode[pb]
-	cpu.intcode[pc] = a * b
+	pnoun, pverb, paddress := peek[1], peek[2], peek[3]
+	noun, verb := cpu.intcode[pnoun], cpu.intcode[pverb]
+	cpu.intcode[paddress] = noun * verb
+
+	return cpu.intcode[paddress]
 }
+
