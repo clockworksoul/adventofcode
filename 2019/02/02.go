@@ -37,7 +37,7 @@ func day1() {
 	}
 
 	// What value is left at position 0 after the program halts?
-	log.Println("(1) Value at position 0:", cpu.intcode[0])
+	log.Println("(1) Value at position 0:", cpu.Value())
 }
 
 func day2() {
@@ -59,7 +59,7 @@ func day2() {
 				// Processing...
 			}
 
-			if cpu.intcode[0] == seeking {
+			if cpu.Value() == seeking {
 				log.Printf("(2) Found %d! noun=%d; verb=%d\n", seeking, noun, verb)
 				log.Printf("(2) 100 * noun + verb = %d\n", (100*noun)+verb)
 				return
@@ -96,61 +96,68 @@ type CPU struct {
 	intcode []int
 	ip      int
 	halted  bool
-	value   int
 }
 
 func (cpu *CPU) DoNext() bool {
-	var val int
-
 	if cpu.halted || cpu.ip >= len(cpu.intcode) {
 		return false
 	}
 
-	switch cpu.intcode[cpu.ip] {
+	var instructionLength int
+
+	switch cpu.Peek() {
 	case CodeAdd:
-		val = cpu.executeAdd()
-		cpu.ip += 4
+		instructionLength = cpu.executeAdd()
 	case CodeMul:
-		val = cpu.executeMul()
-		cpu.ip += 4
+		instructionLength = cpu.executeMul()
 	case CodeHalt:
-		cpu.halted = true
-		cpu.ip += 1
+		instructionLength = cpu.executeHalt()
 	}
 
-	cpu.value = val
+	cpu.ip += instructionLength
 
 	return true
 }
 
-func (cpu *CPU) Value() int {
-	return cpu.value
-}
-
-func (cpu *CPU) Peek() []int {
-	ints := make([]int, 4)
-
-	for i := 0; i < 4 && i+cpu.ip < len(cpu.intcode); i++ {
-		ints[i] = cpu.intcode[cpu.ip+i]
+func (cpu *CPU) Peek() int {
+	if cpu.ip >= len(cpu.intcode) {
+		return 0
 	}
 
-	return ints
+	return cpu.intcode[cpu.ip]	
+}
+
+func (cpu *CPU) PeekN(length int) []int {
+	start, end := cpu.ip, cpu.ip + length
+
+	if end > len(cpu.intcode) {
+		end = len(cpu.intcode)
+	}
+
+	return cpu.intcode[start:end]
+}
+
+func (cpu *CPU) Value() int {
+	return cpu.intcode[0]
 }
 
 func (cpu *CPU) executeAdd() int {
-	peek := cpu.Peek()
+	peek := cpu.PeekN(4)
 	pnoun, pverb, paddress := peek[1], peek[2], peek[3]
 	noun, verb := cpu.intcode[pnoun], cpu.intcode[pverb]
 	cpu.intcode[paddress] = noun + verb
-
-	return cpu.intcode[paddress]
+	return 4
 }
 
 func (cpu *CPU) executeMul() int {
-	peek := cpu.Peek()
+	peek := cpu.PeekN(4)
 	pnoun, pverb, paddress := peek[1], peek[2], peek[3]
 	noun, verb := cpu.intcode[pnoun], cpu.intcode[pverb]
 	cpu.intcode[paddress] = noun * verb
+	return 4
+}
 
-	return cpu.intcode[paddress]
+func (cpu *CPU) executeHalt() int {
+	cpu.halted = true
+	return 1
 }

@@ -8,7 +8,7 @@ func TestPeekNormal(t *testing.T) {
 	i := []int{1, 9, 10, 3}
 	cpu := CPU{intcode: i}
 
-	peek := cpu.Peek()
+	peek := cpu.PeekN(4)
 	if !SlicesEqual(peek, i[0:4]) {
 		t.Fatal("unexpected read order:", peek)
 	}
@@ -18,8 +18,8 @@ func TestPeekOverrun(t *testing.T) {
 	i := []int{1, 9, 10, 3}
 	cpu := CPU{intcode: i, ip: 4}
 
-	peek := cpu.Peek()
-	if !SlicesEqual(peek, []int{0, 0, 0, 0}) {
+	peek := cpu.PeekN(4)
+	if !SlicesEqual(peek, []int{}) {
 		t.Fatal("unexpected read order:", peek)
 	}
 }
@@ -30,7 +30,7 @@ func TestAdd(t *testing.T) {
 
 	t.Log("IN: ", cpu.intcode)
 
-	peek := cpu.Peek()
+	peek := cpu.PeekN(4)
 	if !SlicesEqual(peek, i[0:4]) {
 		t.Fatal("unexpected read order:", peek)
 	}
@@ -42,10 +42,6 @@ func TestAdd(t *testing.T) {
 	}
 	if i[3] != 70 {
 		t.Errorf("add failed: expected 70, got %d\n", i[3])
-	}
-
-	if cpu.Value() != 70 {
-		t.Errorf("bad value: expected=70, got=%d\n", cpu.Value())
 	}
 
 	t.Log("OUT:", cpu.intcode)
@@ -72,10 +68,6 @@ func TestHalt(t *testing.T) {
 	if b {
 		t.Errorf("DoNext returned true")
 	}
-
-	if cpu.Value() != 0 {
-		t.Errorf("bad value: expected=0, got=%d\n", cpu.Value())
-	}
 }
 
 func TestMul(t *testing.T) {
@@ -84,7 +76,7 @@ func TestMul(t *testing.T) {
 
 	t.Log("IN: ", cpu.intcode)
 
-	peek := cpu.Peek()
+	peek := cpu.PeekN(4)
 	if !SlicesEqual(peek, i[4:8]) {
 		t.Fatal("Unexpected read order:", peek)
 	}
@@ -94,12 +86,8 @@ func TestMul(t *testing.T) {
 	if !b {
 		t.Errorf("DoNext returned false")
 	}
-	if i[0] != 3500 {
-		t.Errorf("add failed: expected 3500, got %d\n", i[0])
-	}
-
 	if cpu.Value() != 3500 {
-		t.Errorf("bad value: expected=3500, got=%d\n", cpu.Value())
+		t.Errorf("add failed: expected 3500, got %d\n", i[0])
 	}
 
 	t.Log("OUT:", cpu.intcode)
@@ -111,10 +99,12 @@ func SlicesEqual(a, b []int) bool {
 	if len(a) != len(b) {
 		return false
 	}
+
 	for i, v := range a {
 		if v != b[i] {
 			return false
 		}
 	}
+
 	return true
 }
