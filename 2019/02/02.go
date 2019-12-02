@@ -26,14 +26,14 @@ func day1() {
 	}
 
 	// Before running the program, replace position 1 with the value 12 and
-	// replace position 2 with the value 2. 
+	// replace position 2 with the value 2.
 	ints[1] = 12
 	ints[2] = 2
 
-	cpu := CPU{intcode:ints}
+	cpu := CPU{intcode: ints}
 
 	for cpu.DoNext() {
-		log.Println("Processing...")
+		// Processing...
 	}
 
 	// What value is left at position 0 after the program halts?
@@ -53,13 +53,15 @@ func day2() {
 			ints[1] = noun
 			ints[2] = verb
 
-			cpu := CPU{intcode:ints}
+			cpu := CPU{intcode: ints}
 
-			for cpu.DoNext() {}
+			for cpu.DoNext() {
+				// Processing...
+			}
 
 			if cpu.intcode[0] == seeking {
 				log.Printf("(2) Found %d! noun=%d; verb=%d\n", seeking, noun, verb)
-				log.Printf("(2) 100 * noun + verb = %d\n", (100 * noun) + verb)
+				log.Printf("(2) 100 * noun + verb = %d\n", (100*noun)+verb)
 				return
 			}
 		}
@@ -97,13 +99,6 @@ type CPU struct {
 	value   int
 }
 
-type Instruction struct {
-	opcode int
-	noun   int
-	verb   int
-
-}
-
 func (cpu *CPU) DoNext() bool {
 	var val int
 
@@ -135,8 +130,8 @@ func (cpu *CPU) Value() int {
 func (cpu *CPU) Peek() []int {
 	ints := make([]int, 4)
 
-	for i := 0; i < 4 && i + cpu.ip < len(cpu.intcode); i++ {
-		ints[i] = cpu.intcode[cpu.ip + i]
+	for i := 0; i < 4 && i+cpu.ip < len(cpu.intcode); i++ {
+		ints[i] = cpu.intcode[cpu.ip+i]
 	}
 
 	return ints
@@ -159,4 +154,3 @@ func (cpu *CPU) executeMul() int {
 
 	return cpu.intcode[paddress]
 }
-
