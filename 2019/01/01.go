@@ -33,7 +33,7 @@ func calcFuelSum() (int, int, error) {
 }
 
 func ingestInputs() (<-chan int, error) {
-	file, err := os.OpenFile("input.txt", os.O_RDWR, 0755)
+	file, err := os.Open("input.txt")
 	if err != nil {
 		return nil, fmt.Errorf("cannot open input file: %w", err)
 	}
