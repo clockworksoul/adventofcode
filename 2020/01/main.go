@@ -1,10 +1,11 @@
 package main
 
 import (
-	"adventofcode"
 	"fmt"
 	"log"
 	"strconv"
+
+	"github.com/clockworksoul/adventofcode"
 )
 
 func main() {

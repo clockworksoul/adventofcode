@@ -1,4 +1,4 @@
-module adventofcode
+module github.com/clockworksoul/adventofcode
 
 go 1.15
 
