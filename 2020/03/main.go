@@ -1,24 +1,19 @@
 package main
 
 import (
-	"bufio"
+	"adventofcode"
 	"fmt"
 	"log"
-	"os"
 )
 
 func main() {
-	file, err := os.Open("./input.txt")
+	trees := []string{}
+
+	err := adventofcode.IngestFile("./input.txt", func(txt string) {
+		trees = append(trees, txt)
+	})
 	if err != nil {
 		log.Fatal(err)
-	}
-	defer file.Close()
-
-	var trees []string
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		trees = append(trees, scanner.Text())
 	}
 
 	fmt.Println(countTrees(trees, 1, 1) *
