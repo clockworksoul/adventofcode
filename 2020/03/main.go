@@ -18,11 +18,7 @@ func main() {
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		txt := scanner.Text()
-		if err != nil {
-			log.Fatalf("parse failure: \"%s\"", txt)
-		}
-		trees = append(trees, txt)
+		trees = append(trees, scanner.Text())
 	}
 
 	fmt.Println(countTrees(trees, 1, 1) *
