@@ -21,3 +21,20 @@ func TestIngestFile(t *testing.T) {
 	assert.Equal(t, len(expected), len(lines))
 	assert.EqualValues(t, expected, lines)
 }
+
+func TestIngestFileE(t *testing.T) {
+	expected := []string{"one", "two", "three"}
+	lines := []string{}
+
+	err := IngestFileE("./input_test.txt", func(txt string) error {
+		lines = append(lines, txt)
+		return nil
+	})
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	assert.Equal(t, len(expected), len(lines))
+	assert.EqualValues(t, expected, lines)
+}

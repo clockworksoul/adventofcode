@@ -1,10 +1,9 @@
 package main
 
 import (
-	"bufio"
+	"adventofcode"
 	"fmt"
 	"log"
-	"os"
 	"strconv"
 )
 
@@ -28,26 +27,15 @@ func main() {
 func scanInput() ([]int, error) {
 	var inputs = []int{}
 
-	file, err := os.Open("./input.txt")
-	if err != nil {
-		return []int{}, err
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		txt := scanner.Text()
+	adventofcode.IngestFileE("./input.txt", func(txt string) error {
 		i, err := strconv.Atoi(txt)
 		if err != nil {
-			fmt.Printf("warning: cannot parse %s as integer", txt)
+			return fmt.Errorf("warning: cannot parse %s as integer", txt)
 		}
 
 		inputs = append(inputs, i)
-	}
-
-	if err := scanner.Err(); err != nil {
-		return []int{}, err
-	}
+		return nil
+	})
 
 	return inputs, nil
 }

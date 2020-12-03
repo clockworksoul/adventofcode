@@ -6,6 +6,13 @@ import (
 )
 
 func IngestFile(name string, f func(string)) error {
+	return IngestFileE(name, func(s string) error {
+		f(s)
+		return nil
+	})
+}
+
+func IngestFileE(name string, f func(string) error) error {
 	file, err := os.Open(name)
 	if err != nil {
 		return err
@@ -14,7 +21,10 @@ func IngestFile(name string, f func(string)) error {
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		f(scanner.Text())
+		err = f(scanner.Text())
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

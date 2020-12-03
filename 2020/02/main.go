@@ -1,36 +1,46 @@
 package main
 
 import (
-	"bufio"
+	"adventofcode"
 	"fmt"
 	"log"
-	"os"
 	"strings"
 )
 
 func main() {
-	file, err := os.Open("./input.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
 	count := 0
 
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		txt := scanner.Text()
+	err := adventofcode.IngestFileE("./input.txt", func(txt string) error {
 		l, err := parseLine(txt)
 		if err != nil {
-			log.Fatalf("parse failure: \"%s\"", txt)
+			return fmt.Errorf("parse failure: \"%s\"", txt)
 		}
 
 		if evaluateLine2(l) {
 			count++
 		}
+
+		return nil
+	})
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	fmt.Println(count)
+}
+
+type LineParts struct {
+	min      int
+	max      int
+	letter   string
+	password string
+}
+
+func parseLine(line string) (LineParts, error) {
+	l := LineParts{}
+	_, err := fmt.Sscanf(line, "%d-%d %s %s", &l.min, &l.max, &l.letter, &l.password)
+	l.letter = string(l.letter[0])
+	return l, err
 }
 
 func evaluateLine1(l LineParts) bool {
