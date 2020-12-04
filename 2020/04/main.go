@@ -75,8 +75,7 @@ func funcMinMax(min, max int) func(string) (bool, error) {
 }
 
 func funcHeight(str string) (bool, error) {
-	unit := str[len(str)-2:]
-	val := str[:len(str)-2]
+	unit, val := str[len(str)-2:], str[:len(str)-2]
 
 	switch unit {
 	case "cm":
