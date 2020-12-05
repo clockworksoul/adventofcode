@@ -11,7 +11,7 @@ func main() {
 	highest := 0
 
 	adventofcode.IngestFile("./input.txt", func(txt string) {
-		row, column := 0, 0
+		var row, column int
 
 		for i, f, b := 0, 0, 127; i < 8; i++ {
 			switch txt[i] {
