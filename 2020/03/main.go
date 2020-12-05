@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/clockworksoul/adventofcode"
 )
@@ -10,12 +9,9 @@ import (
 func main() {
 	trees := []string{}
 
-	err := adventofcode.IngestFile("./input.txt", func(txt string) {
+	adventofcode.IngestFile("./input.txt", func(txt string) {
 		trees = append(trees, txt)
 	})
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	fmt.Println(countTrees(trees, 1, 1) *
 		countTrees(trees, 3, 1) *
