@@ -13,7 +13,7 @@ func main() {
 	adventofcode.IngestFile("./input.txt", func(txt string) {
 		var row, column int
 
-		for i, f, b := 0, 0, 127; i < 8; i++ {
+		for i, f, b, l, r := 0, 0, 127, 0, 7; i < 10; i++ {
 			switch txt[i] {
 			case 'F':
 				next := (f + b) / 2
@@ -21,11 +21,6 @@ func main() {
 			case 'B':
 				next := (f + b + 1) / 2
 				f, row = next, next
-			}
-		}
-
-		for i, l, r := 7, 0, 7; i < 10; i++ {
-			switch txt[i] {
 			case 'L':
 				next := (l + r) / 2
 				r, column = next, next
@@ -47,7 +42,7 @@ func main() {
 
 	for i := 100; i < len(present)-100; i++ {
 		if !present[i] {
-			fmt.Println("Missing: ", i)
+			fmt.Println("Missing:", i)
 		}
 	}
 }
