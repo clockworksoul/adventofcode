@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/clockworksoul/adventofcode"
 )
@@ -10,11 +9,9 @@ import (
 func main() {
 	inputs := []int{}
 
-	if err := adventofcode.IngestFileInt("input.txt", func(i int) {
+	adventofcode.IngestFileInt("input.txt", func(i int) {
 		inputs = append(inputs, i)
-	}); err != nil {
-		log.Fatal(err)
-	}
+	})
 
 	for _, i := range inputs {
 		for _, j := range inputs {
