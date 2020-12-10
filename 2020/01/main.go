@@ -3,14 +3,16 @@ package main
 import (
 	"fmt"
 	"log"
-	"strconv"
 
 	"github.com/clockworksoul/adventofcode"
 )
 
 func main() {
-	inputs, err := scanInput()
-	if err != nil {
+	inputs := []int{}
+
+	if err := adventofcode.IngestFileInt("input.txt", func(i int) {
+		inputs = append(inputs, i)
+	}); err != nil {
 		log.Fatal(err)
 	}
 
@@ -23,20 +25,4 @@ func main() {
 			}
 		}
 	}
-}
-
-func scanInput() ([]int, error) {
-	var inputs = []int{}
-
-	adventofcode.IngestFileE("./input.txt", func(txt string) error {
-		i, err := strconv.Atoi(txt)
-		if err != nil {
-			return fmt.Errorf("warning: cannot parse %s as integer", txt)
-		}
-
-		inputs = append(inputs, i)
-		return nil
-	})
-
-	return inputs, nil
 }
