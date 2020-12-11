@@ -6,46 +6,46 @@ import (
 	"github.com/clockworksoul/adventofcode"
 )
 
-type Seat rune
+type seat rune
 
 const (
-	Floor    Seat = ','
-	Empty    Seat = 'L'
-	Occupied Seat = '#'
+	floor    seat = ','
+	empty    seat = 'L'
+	occupied seat = '#'
 )
 
 func main() {
-	var seats = [][]Seat{}
+	var seats = [][]seat{}
 
 	adventofcode.IngestFile("input.txt", func(line string) {
-		seats = append(seats, IngestLine(line))
+		seats = append(seats, ingestLine(line))
 	})
 
-	StarOne(seats)
-	StarTwo(seats)
+	starOne(seats)
+	starTwo(seats)
 }
 
-func StarOne(seats [][]Seat) {
-	seats, changes, occupied := Tick(seats, 4, CountOccupiedOne)
+func starOne(seats [][]seat) {
+	seats, changes, occupied := tick(seats, 4, countOccupiedOne)
 	for changes > 0 {
-		seats, changes, occupied = Tick(seats, 4, CountOccupiedOne)
+		seats, changes, occupied = tick(seats, 4, countOccupiedOne)
 	}
 	fmt.Println("One:", occupied)
 }
 
-func StarTwo(seats [][]Seat) {
-	seats, changes, occupied := Tick(seats, 5, CountOccupiedTwo)
+func starTwo(seats [][]seat) {
+	seats, changes, occupied := tick(seats, 5, countOccupiedTwo)
 	for changes > 0 {
-		seats, changes, occupied = Tick(seats, 5, CountOccupiedTwo)
+		seats, changes, occupied = tick(seats, 5, countOccupiedTwo)
 	}
 	fmt.Println("Two:", occupied)
 }
 
-func Tick(seats [][]Seat, occupiedThreshold int, count func(x, y int, s [][]Seat) int) ([][]Seat, int, int) {
-	changes, occupied := 0, 0
-	ng := [][]Seat{}
+func tick(seats [][]seat, occupiedThreshold int, count func(x, y int, s [][]seat) int) ([][]seat, int, int) {
+	changes, occ := 0, 0
+	ng := [][]seat{}
 	for _, s := range seats {
-		ng = append(ng, make([]Seat, len(s)))
+		ng = append(ng, make([]seat, len(s)))
 	}
 
 	for y := range seats {
@@ -53,10 +53,10 @@ func Tick(seats [][]Seat, occupiedThreshold int, count func(x, y int, s [][]Seat
 			sum := count(x, y, seats)
 
 			switch {
-			case seats[y][x] == Empty && sum == 0:
-				ng[y][x] = Occupied
-			case seats[y][x] == Occupied && sum >= occupiedThreshold:
-				ng[y][x] = Empty
+			case seats[y][x] == empty && sum == 0:
+				ng[y][x] = occupied
+			case seats[y][x] == occupied && sum >= occupiedThreshold:
+				ng[y][x] = empty
 			default:
 				ng[y][x] = seats[y][x]
 			}
@@ -64,18 +64,18 @@ func Tick(seats [][]Seat, occupiedThreshold int, count func(x, y int, s [][]Seat
 			if seats[y][x] != ng[y][x] {
 				changes++
 			}
-			if ng[y][x] == Occupied {
-				occupied++
+			if ng[y][x] == occupied {
+				occ++
 			}
 		}
 	}
 
-	return ng, changes, occupied
+	return ng, changes, occ
 }
 
-func CountOccupiedOne(x, y int, s [][]Seat) int {
-	count := func(x, y int, s [][]Seat) int {
-		if SeatValid(x, y, s) && s[y][x] == Occupied {
+func countOccupiedOne(x, y int, s [][]seat) int {
+	count := func(x, y int, s [][]seat) int {
+		if seatValid(x, y, s) && s[y][x] == occupied {
 			return 1
 		}
 		return 0
@@ -93,7 +93,7 @@ func CountOccupiedOne(x, y int, s [][]Seat) int {
 	return sum
 }
 
-func CountOccupiedTwo(x, y int, s [][]Seat) int {
+func countOccupiedTwo(x, y int, s [][]seat) int {
 	sum := 0
 
 	for dy := -1; dy <= 1; dy++ {
@@ -102,11 +102,11 @@ func CountOccupiedTwo(x, y int, s [][]Seat) int {
 				continue
 			}
 
-			for sx, sy := x+dx, y+dy; SeatValid(sx, sy, s); sx, sy = sx+dx, sy+dy {
-				if s[sy][sx] == Occupied {
+			for sx, sy := x+dx, y+dy; seatValid(sx, sy, s); sx, sy = sx+dx, sy+dy {
+				if s[sy][sx] == occupied {
 					sum++
 					break
-				} else if s[sy][sx] == Empty {
+				} else if s[sy][sx] == empty {
 					break
 				}
 			}
@@ -116,14 +116,14 @@ func CountOccupiedTwo(x, y int, s [][]Seat) int {
 	return sum
 }
 
-func SeatValid(x, y int, s [][]Seat) bool {
+func seatValid(x, y int, s [][]seat) bool {
 	return y >= 0 && y < len(s) && x >= 0 && x < len(s[y])
 }
 
-func IngestLine(line string) []Seat {
-	s := make([]Seat, len(line))
+func ingestLine(line string) []seat {
+	s := make([]seat, len(line))
 	for i, c := range line {
-		s[i] = Seat(c)
+		s[i] = seat(c)
 	}
 	return s
 }

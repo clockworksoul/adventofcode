@@ -19,7 +19,7 @@ func TestSeats8(t *testing.T) {
 #........
 ...#.....`
 	seats := textToSeats(text)
-	sum := CountOccupiedTwo(3, 4, seats)
+	sum := countOccupiedTwo(3, 4, seats)
 
 	assert.Equal(t, 8, sum)
 }
@@ -29,7 +29,7 @@ func TestSeats1(t *testing.T) {
 .L.L.#.#.#.#.
 .............`
 	seats := textToSeats(text)
-	sum := CountOccupiedTwo(1, 1, seats)
+	sum := countOccupiedTwo(1, 1, seats)
 
 	assert.Equal(t, 0, sum)
 }
@@ -43,23 +43,23 @@ func TestSeats0(t *testing.T) {
 #.#.#.#
 .##.##.`
 	seats := textToSeats(text)
-	sum := CountOccupiedTwo(3, 3, seats)
+	sum := countOccupiedTwo(3, 3, seats)
 
 	assert.Equal(t, 0, sum)
 }
 
-func textToSeats(text string) [][]Seat {
-	seats := [][]Seat{}
+func textToSeats(text string) [][]seat {
+	seats := [][]seat{}
 	lines := strings.Split(text, "\n")
 
 	for _, s := range lines {
-		seats = append(seats, IngestLine(s))
+		seats = append(seats, ingestLine(s))
 	}
 
 	return seats
 }
 
-func Print(seats [][]Seat) {
+func Print(seats [][]seat) {
 	line := ""
 	for _, y := range seats {
 		line = ""
