@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -18,7 +19,7 @@ func TestSeats8(t *testing.T) {
 #........
 ...#.....`
 	seats := textToSeats(text)
-	sum := CountOccupied2(3, 4, seats)
+	sum := CountOccupiedTwo(3, 4, seats)
 
 	assert.Equal(t, 8, sum)
 }
@@ -28,7 +29,7 @@ func TestSeats1(t *testing.T) {
 .L.L.#.#.#.#.
 .............`
 	seats := textToSeats(text)
-	sum := CountOccupied2(1, 1, seats)
+	sum := CountOccupiedTwo(1, 1, seats)
 
 	assert.Equal(t, 0, sum)
 }
@@ -42,7 +43,7 @@ func TestSeats0(t *testing.T) {
 #.#.#.#
 .##.##.`
 	seats := textToSeats(text)
-	sum := CountOccupied2(3, 3, seats)
+	sum := CountOccupiedTwo(3, 3, seats)
 
 	assert.Equal(t, 0, sum)
 }
@@ -56,4 +57,15 @@ func textToSeats(text string) [][]Seat {
 	}
 
 	return seats
+}
+
+func Print(seats [][]Seat) {
+	line := ""
+	for _, y := range seats {
+		line = ""
+		for _, s := range y {
+			line += string(s)
+		}
+		fmt.Println(line)
+	}
 }

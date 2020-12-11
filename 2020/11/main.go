@@ -21,35 +21,27 @@ func main() {
 		seats = append(seats, IngestLine(line))
 	})
 
-	One(seats)
-	Two(seats)
+	StarOne(seats)
+	StarTwo(seats)
 }
 
-func IngestLine(line string) []Seat {
-	s := make([]Seat, len(line))
-	for i, c := range line {
-		s[i] = Seat(c)
-	}
-	return s
-}
-
-func One(seats [][]Seat) {
-	seats, changes, occupied := Tick1(seats)
+func StarOne(seats [][]Seat) {
+	seats, changes, occupied := Tick(seats, 4, CountOccupiedOne)
 	for changes > 0 {
-		seats, changes, occupied = Tick1(seats)
+		seats, changes, occupied = Tick(seats, 4, CountOccupiedOne)
 	}
 	fmt.Println("One:", occupied)
 }
 
-func Two(seats [][]Seat) {
-	seats, changes, occupied := Tick2(seats)
+func StarTwo(seats [][]Seat) {
+	seats, changes, occupied := Tick(seats, 5, CountOccupiedTwo)
 	for changes > 0 {
-		seats, changes, occupied = Tick2(seats)
+		seats, changes, occupied = Tick(seats, 5, CountOccupiedTwo)
 	}
 	fmt.Println("Two:", occupied)
 }
 
-func Tick1(seats [][]Seat) ([][]Seat, int, int) {
+func Tick(seats [][]Seat, occupiedThreshold int, count func(x, y int, s [][]Seat) int) ([][]Seat, int, int) {
 	changes, occupied := 0, 0
 	ng := [][]Seat{}
 	for _, s := range seats {
@@ -58,19 +50,12 @@ func Tick1(seats [][]Seat) ([][]Seat, int, int) {
 
 	for y := range seats {
 		for x := range seats[y] {
-			sum := count(x-1, y-1, seats) +
-				count(x-0, y-1, seats) +
-				count(x+1, y-1, seats) +
-				count(x-1, y-0, seats) +
-				count(x+1, y-0, seats) +
-				count(x-1, y+1, seats) +
-				count(x-0, y+1, seats) +
-				count(x+1, y+1, seats)
+			sum := count(x, y, seats)
 
 			switch {
 			case seats[y][x] == Empty && sum == 0:
 				ng[y][x] = Occupied
-			case seats[y][x] == Occupied && sum >= 4:
+			case seats[y][x] == Occupied && sum >= occupiedThreshold:
 				ng[y][x] = Empty
 			default:
 				ng[y][x] = seats[y][x]
@@ -88,39 +73,27 @@ func Tick1(seats [][]Seat) ([][]Seat, int, int) {
 	return ng, changes, occupied
 }
 
-func Tick2(seats [][]Seat) ([][]Seat, int, int) {
-	changes, occupied := 0, 0
-	ng := [][]Seat{}
-	for _, s := range seats {
-		ng = append(ng, make([]Seat, len(s)))
-	}
-
-	for y := range seats {
-		for x := range seats[y] {
-			sum := CountOccupied2(x, y, seats)
-
-			switch {
-			case seats[y][x] == Empty && sum == 0:
-				ng[y][x] = Occupied
-			case seats[y][x] == Occupied && sum >= 5:
-				ng[y][x] = Empty
-			default:
-				ng[y][x] = seats[y][x]
-			}
-
-			if seats[y][x] != ng[y][x] {
-				changes++
-			}
-			if ng[y][x] == Occupied {
-				occupied++
-			}
+func CountOccupiedOne(x, y int, s [][]Seat) int {
+	count := func(x, y int, s [][]Seat) int {
+		if SeatValid(x, y, s) && s[y][x] == Occupied {
+			return 1
 		}
+		return 0
 	}
 
-	return ng, changes, occupied
+	sum := count(x-1, y-1, s) +
+		count(x-0, y-1, s) +
+		count(x+1, y-1, s) +
+		count(x-1, y-0, s) +
+		count(x+1, y-0, s) +
+		count(x-1, y+1, s) +
+		count(x-0, y+1, s) +
+		count(x+1, y+1, s)
+
+	return sum
 }
 
-func CountOccupied2(x, y int, s [][]Seat) int {
+func CountOccupiedTwo(x, y int, s [][]Seat) int {
 	sum := 0
 
 	for dy := -1; dy <= 1; dy++ {
@@ -129,7 +102,7 @@ func CountOccupied2(x, y int, s [][]Seat) int {
 				continue
 			}
 
-			for sx, sy := x+dx, y+dy; valid(sx, sy, s); sx, sy = sx+dx, sy+dy {
+			for sx, sy := x+dx, y+dy; SeatValid(sx, sy, s); sx, sy = sx+dx, sy+dy {
 				if s[sy][sx] == Occupied {
 					sum++
 					break
@@ -143,24 +116,14 @@ func CountOccupied2(x, y int, s [][]Seat) int {
 	return sum
 }
 
-func valid(x, y int, s [][]Seat) bool {
+func SeatValid(x, y int, s [][]Seat) bool {
 	return y >= 0 && y < len(s) && x >= 0 && x < len(s[y])
 }
 
-func count(x, y int, s [][]Seat) int {
-	if valid(x, y, s) && s[y][x] == Occupied {
-		return 1
+func IngestLine(line string) []Seat {
+	s := make([]Seat, len(line))
+	for i, c := range line {
+		s[i] = Seat(c)
 	}
-	return 0
-}
-
-func Print(seats [][]Seat) {
-	line := ""
-	for _, y := range seats {
-		line = ""
-		for _, s := range y {
-			line += string(s)
-		}
-		fmt.Println(line)
-	}
+	return s
 }
