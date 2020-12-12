@@ -69,7 +69,7 @@ func (p *position) manhattan() int {
 }
 
 func main() {
-	p := &position{}
+	ship := &position{}
 	waypoint := &position{pos: [2]int{10, 1}}
 
 	adventofcode.IngestFile("input.txt", func(line string) {
@@ -91,12 +91,12 @@ func main() {
 		case 'R':
 			waypoint.turn(right, units)
 		case 'F':
-			p.forward(waypoint, units)
+			ship.forward(waypoint, units)
 		}
 
-		fmt.Println(p.pos, waypoint.pos)
+		fmt.Println(ship.pos, waypoint.pos)
 
 	})
 
-	fmt.Println(p.manhattan())
+	fmt.Println(ship.manhattan())
 }
