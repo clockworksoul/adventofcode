@@ -40,16 +40,27 @@ func (p *position) move(direction int, units int) {
 }
 
 func (p *position) turn(facing int, degrees int) {
-	p.facing += (facing * (degrees / 90))
-	p.facing %= 4
-	if p.facing < 0 {
-		p.facing = (4 + p.facing) % 4
+	units := (facing * (degrees / 90)) % 4
+	if units < 0 {
+		units = (4 + units) % 4
+	}
+
+	switch units {
+	case 0: // No-op
+	case 1:
+		p.pos[0], p.pos[1] = p.pos[1], -1*p.pos[0]
+	case 2:
+		p.pos[0], p.pos[1] = -1*p.pos[0], -1*p.pos[1]
+	case 3:
+		p.pos[0], p.pos[1] = -1*p.pos[1], p.pos[0]
 	}
 }
 
-func (p *position) forward(units int) {
-	p.pos[0] += directions[p.facing][0] * units
-	p.pos[1] += directions[p.facing][1] * units
+func (p *position) forward(waypoint *position, units int) {
+	for i := 0; i < units; i++ {
+		p.pos[0] += waypoint.pos[0]
+		p.pos[1] += waypoint.pos[1]
+	}
 }
 
 func (p *position) manhattan() int {
@@ -58,7 +69,8 @@ func (p *position) manhattan() int {
 }
 
 func main() {
-	p := &position{waypoint: [2]int{0, 0}}
+	p := &position{}
+	waypoint := &position{pos: [2]int{10, 1}}
 
 	adventofcode.IngestFile("input.txt", func(line string) {
 		fmt.Print(line, " ")
@@ -67,25 +79,24 @@ func main() {
 
 		switch c {
 		case 'N':
-			p.move(north, units)
+			waypoint.move(north, units)
 		case 'S':
-			p.move(south, units)
+			waypoint.move(south, units)
 		case 'E':
-			p.move(east, units)
+			waypoint.move(east, units)
 		case 'W':
-			p.move(west, units)
+			waypoint.move(west, units)
 		case 'L':
-			p.turn(left, units)
+			waypoint.turn(left, units)
 		case 'R':
-			p.turn(right, units)
+			waypoint.turn(right, units)
 		case 'F':
-			p.forward(units)
+			p.forward(waypoint, units)
 		}
 
-		fmt.Println(p.pos)
+		fmt.Println(p.pos, waypoint.pos)
 
 	})
 
 	fmt.Println(p.manhattan())
-
 }
