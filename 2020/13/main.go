@@ -25,9 +25,10 @@ func main() {
 					continue
 				}
 
-				ids = append(ids, adventofcode.MustParseInt(s))
+				si := adventofcode.MustParseInt(s)
+				ids = append(ids, si)
+				buses[i] = si
 
-				buses[i] = adventofcode.MustParseInt(s)
 				if i != 0 {
 					indices = append(indices, i)
 				}
@@ -40,8 +41,8 @@ func main() {
 }
 
 func starOne(timestamp int, ids []int) {
-	eid := 0
-	min := math.MaxInt64
+	eid, min := 0, math.MaxInt64
+
 	for _, id := range ids {
 		time := 0
 		for ; time < timestamp; time += id {
@@ -51,9 +52,8 @@ func starOne(timestamp int, ids []int) {
 			min = time
 		}
 	}
-	wait := min - timestamp
 
-	fmt.Printf("Star one: %d * %d = %d\n", eid, wait, eid*wait)
+	fmt.Printf("Star one: %d\n", eid*(min-timestamp))
 }
 
 // Part 2 uses https://en.wikipedia.org/wiki/Chinese_remainder_theorem
