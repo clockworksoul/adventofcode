@@ -6,6 +6,14 @@ import (
 	"strconv"
 )
 
+// MustIngestFile ingests the text file name and calls function f on each line.
+// The function will panic if a non-EOF error is encountered by the scanner.
+func MustIngestFile(name string, f func(string)) {
+	if err := IngestFile(name, f); err != nil {
+		panic(err)
+	}
+}
+
 // IngestFile ingests the text file name and calls function f on each line.
 // A non-nil error will be returned if a non-EOF error is encountered
 // by the scanner.
@@ -14,6 +22,15 @@ func IngestFile(name string, f func(string)) error {
 		f(s)
 		return nil
 	})
+}
+
+// MustIngestFileE ingests the text file name and calls function f on each line.
+// The function will panic if a non-nil error is f returns an error or if a
+// non-EOF error is encountered by the scanner.
+func MustIngestFileE(name string, f func(string) error) {
+	if err := IngestFileE(name, f); err != nil {
+		panic(err)
+	}
 }
 
 // IngestFileE ingests the text file name and calls function f on each line.
