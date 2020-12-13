@@ -86,3 +86,21 @@ func IngestFileIntE(name string, f func(int) error) error {
 		return f(val)
 	})
 }
+
+// MustParseInt parses a string into an int or panics.
+func MustParseInt(s string) int {
+	n, err := strconv.Atoi(s)
+	if err != nil {
+		panic(err)
+	}
+	return n
+}
+
+// MustParseInt64 parses a string into an int64 or panics.
+func MustParseInt64(s string) int64 {
+	n, err := strconv.ParseInt(s, 10, 64)
+	if err != nil {
+		panic(err)
+	}
+	return n
+}

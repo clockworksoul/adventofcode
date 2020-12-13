@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	adventofcode.IngestFile("./input.txt", func(line string) {
+	adventofcode.MustIngestFile("input.txt", func(line string) {
 
 	})
 }
