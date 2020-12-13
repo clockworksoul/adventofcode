@@ -3,37 +3,43 @@ package main
 import (
 	"fmt"
 	"math"
-	"strconv"
 	"strings"
 
 	"github.com/clockworksoul/adventofcode"
 )
 
-const input = "input.txt"
-
 func main() {
-	starOne()
-	starTwo()
-}
-
-func starOne() {
 	timestamp := 0
 	ids := []int{}
 
-	adventofcode.MustIngestFile(input, func(line string) {
+	indices := []int{}
+	buses := map[int]int{}
+
+	adventofcode.MustIngestFile("input.txt", func(line string) {
 		if timestamp == 0 {
-			timestamp, _ = strconv.Atoi(line)
+			timestamp = adventofcode.MustParseInt(line)
 		} else {
 			parts := strings.Split(line, ",")
-			for _, s := range parts {
-				if s != "x" {
-					id, _ := strconv.Atoi(s)
-					ids = append(ids, id)
+			for i, s := range parts {
+				if s == "x" {
+					continue
+				}
+
+				ids = append(ids, adventofcode.MustParseInt(s))
+
+				buses[i] = adventofcode.MustParseInt(s)
+				if i != 0 {
+					indices = append(indices, i)
 				}
 			}
 		}
 	})
 
+	starOne(timestamp, ids)
+	starTwo(indices, buses)
+}
+
+func starOne(timestamp int, ids []int) {
 	eid := 0
 	min := math.MaxInt64
 	for _, id := range ids {
@@ -54,28 +60,7 @@ func starOne() {
 // I confess I needed assistance from Reddit on Part 2.
 // How can we be expected to just know this?
 
-func starTwo() {
-	indices := []int{}
-	buses := map[int]int{}
-
-	adventofcode.MustIngestFile(input, func(line string) {
-		if len(line) < 10 {
-			return
-		}
-
-		for i, s := range strings.Split(line, ",") {
-			if s == "x" {
-				continue
-			}
-
-			buses[i] = adventofcode.MustParseInt(s)
-			if i == 0 {
-				continue
-			}
-			indices = append(indices, i)
-		}
-	})
-
+func starTwo(indices []int, buses map[int]int) {
 	t := 0
 	n1 := buses[0]
 
