@@ -61,7 +61,6 @@ func (b bitmask) xmasks() map[int64]bool {
 
 	for i := 0; i <= bits; i++ {
 		var m int64 = 1 << i
-
 		if b.xes&m == m {
 			for mask := range masks {
 				masks[mask|m] = true
