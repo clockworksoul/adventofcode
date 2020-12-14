@@ -1,18 +1,10 @@
 package main
 
 import (
-	"fmt"
-	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
-
-func TestXExpansion(t *testing.T) {
-	fmt.Println(strconv.FormatInt(42, 2))
-	// bitmask := newBitmask("000000000000000000000000000000X1001X")
-
-}
 
 func TestMakeXMasks(t *testing.T) {
 	// fmt.Println(strconv.FormatInt(42, 2))
