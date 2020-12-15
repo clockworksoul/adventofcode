@@ -32,14 +32,13 @@ func speak(input []int, max int) []int {
 
 		if !ok || len(before) == 1 {
 			last = 0
-			speak = append(speak, last)
-			spoken[last] = append(spoken[last], i)
 		} else {
 			l := len(before)
 			last = before[l-1] - before[l-2]
-			speak = append(speak, last)
-			spoken[last] = append(spoken[last], i)
 		}
+
+		speak = append(speak, last)
+		spoken[last] = append(spoken[last], i)
 	}
 
 	return speak
