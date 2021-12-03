@@ -11,7 +11,7 @@ func main() {
 	day2()
 }
 
-func day1() {
+func day1() int {
 	var x, depth int
 
 	adventofcode.IngestFile("input.txt", func(s string) {
@@ -32,10 +32,10 @@ func day1() {
 		}
 	})
 
-	fmt.Printf("Day 1: x=%d depth=%d total=%d\n", x, depth, x*depth)
+	return x * depth
 }
 
-func day2() {
+func day2() int {
 	var x, depth, aim int
 
 	adventofcode.IngestFile("input.txt", func(s string) {
@@ -57,5 +57,5 @@ func day2() {
 		}
 	})
 
-	fmt.Printf("Day 2: x=%d depth=%d aim=%d total=%d\n", x, depth, aim, x*depth)
+	return x * depth
 }
