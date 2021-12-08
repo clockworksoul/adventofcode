@@ -7,11 +7,11 @@ import (
 )
 
 func main() {
-	day1()
-	day2()
+	part1()
+	part2()
 }
 
-func day1() int {
+func part1() int {
 	var x, depth int
 
 	adventofcode.IngestFile("input.txt", func(s string) {
@@ -35,7 +35,7 @@ func day1() int {
 	return x * depth
 }
 
-func day2() int {
+func part2() int {
 	var x, depth, aim int
 
 	adventofcode.IngestFile("input.txt", func(s string) {
