@@ -3,6 +3,7 @@ package adventofcode
 import (
 	"bufio"
 	"os"
+	"regexp"
 	"strconv"
 )
 
@@ -103,4 +104,57 @@ func MustParseInt64(s string) int64 {
 		panic(err)
 	}
 	return n
+}
+
+// ParseInts parses a slice of strings into a slice of ints.
+func ParseInts(ss []string) ([]int, error) {
+	var nn = make([]int, len(ss))
+
+	for i, s := range ss {
+		n, err := strconv.Atoi(s)
+		if err != nil {
+			return nil, err
+		}
+		nn[i] = n
+	}
+	return nn, nil
+}
+
+// MustParseInts parses a slice of strings into a slice of ints or panics.
+func MustParseInts(ss []string) []int {
+	nn, err := ParseInts(ss)
+	if err != nil {
+		panic(err)
+	}
+	return nn
+}
+
+// SplitAndParseInts executes a regex split of a string and converts
+// its contents into integers.
+func SplitAndParseInts(s string, rexp string) ([]int, error) {
+	re, err := regexp.Compile(rexp)
+	if err != nil {
+		return nil, err
+	}
+	split := re.Split(s, -1)
+	nn := make([]int, len(split))
+
+	for i, s := range split {
+		n, err := strconv.Atoi(s)
+		if err != nil {
+			return nil, err
+		}
+		nn[i] = n
+	}
+	return nn, nil
+}
+
+// MustSplitAndParseInts executes a regex split of a string and converts
+// its contents into integers, or it panics.
+func MustSplitAndParseInts(s string, rexp string) []int {
+	nn, err := SplitAndParseInts(s, rexp)
+	if err != nil {
+		panic(err)
+	}
+	return nn
 }
