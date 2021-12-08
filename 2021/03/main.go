@@ -8,6 +8,9 @@ import (
 	"github.com/clockworksoul/adventofcode"
 )
 
+const zero byte = '0'
+const one byte = '1'
+
 func main() {
 	var inputs []string
 	adventofcode.IngestFile("input.txt", func(s string) {
@@ -15,6 +18,7 @@ func main() {
 	})
 
 	part1(inputs)
+	part2(inputs)
 }
 
 func part1(inputs []string) {
@@ -39,19 +43,10 @@ func part1(inputs []string) {
 }
 
 func part2(inputs []string) {
-	var mbits = make([]byte, len(inputs[0]))
-	var lbits = make([]byte, len(inputs[0]))
+	ogen := bitCriteria(inputs, true, one)
+	co2s := bitCriteria(inputs, false, zero)
 
-	for i := range mbits {
-		var counts = make(map[byte]int)
-
-		for _, line := range inputs {
-			counts[line[i]]++
-		}
-
-		mbits[i] = mostByte(counts)
-		lbits[i] = leastByte(counts)
-	}
+	fmt.Printf("ogen=%d co2s=%d rating=%d\n", ogen, co2s, ogen*co2s)
 }
 
 func bytesToInt(bits []byte) int {
@@ -59,19 +54,65 @@ func bytesToInt(bits []byte) int {
 	return int(i)
 }
 
-const zero byte = '0'
-const one byte = '1'
-
 func mostByte(m map[byte]int) byte {
-	if m[one] >= m[zero] {
+	if m[zero] <= m[one] {
 		return one
 	}
 	return zero
 }
 
-func leastByte(m map[byte]int) byte {
-	if m[zero] >= m[one] {
-		return zero
+func bitCriteria(inputs []string, most bool, favor byte) int {
+	nbits := len(inputs[0])
+	var accum = inputs
+
+	for n := 0; n < nbits && len(accum) > 1; n++ {
+		var zeroes, ones []string
+
+		for _, input := range accum {
+			switch input[n] {
+			case '0':
+				zeroes = append(zeroes, input)
+			case '1':
+				ones = append(ones, input)
+			default:
+				panic(input)
+			}
+		}
+
+		if most {
+			if len(zeroes) > len(ones) {
+				accum = zeroes
+			} else if len(ones) > len(zeroes) {
+				accum = ones
+			} else if favor == zero {
+				accum = zeroes
+			} else if favor == one {
+				accum = ones
+			} else {
+				panic(accum)
+			}
+		} else {
+			if len(zeroes) < len(ones) {
+				accum = zeroes
+			} else if len(ones) < len(zeroes) {
+				accum = ones
+			} else if favor == zero {
+				accum = zeroes
+			} else if favor == one {
+				accum = ones
+			} else {
+				panic(accum)
+			}
+		}
 	}
-	return one
+
+	i, _ := strconv.ParseInt(accum[0], 2, 32)
+	return int(i)
 }
+
+// func leastByte(m map[byte]int) byte {
+// 	if m[zero] >= m[one] {
+// 		return one
+// 	}
+// 	return zero
+// }
